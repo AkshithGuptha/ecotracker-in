@@ -50,6 +50,7 @@ type Reward = {
   terms?: string;
   popularity?: number;
   createdAt?: string | Date;
+  isNGOReward?: boolean;
 };
 
 type Category = {
