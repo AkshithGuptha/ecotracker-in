@@ -125,7 +125,7 @@ const UserLocationMarker = ({
       {/* Accuracy circle */}
       <Circle {...({ center: [position.lat, position.lng], radius: accuracy, pathOptions: { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.15, weight: 1, opacity: 0.5, dashArray: '5, 5' } } as any)} />
       {/* User position marker */}
-      <Marker 
+      <SafeMarker 
         position={[position.lat, position.lng]} 
         icon={userIcon as any}
       >
@@ -135,10 +135,13 @@ const UserLocationMarker = ({
             <p className="text-xs text-gray-500">Accuracy: ~{Math.round(accuracy)} meters</p>
           </div>
         </Popup>
-      </Marker>
+      </SafeMarker>
     </>
   );
 };
+
+const SafeMarker = Marker as any;
+const SafeMapContainer = MapContainer as any;
 
 const EcoMap = () => {
   const [user, userLoading, userError] = useAuthState(auth);
@@ -760,7 +763,7 @@ const EcoMap = () => {
             <CardContent className="pt-3 h-[70vh]">
               <div className="w-full h-full rounded-xl overflow-hidden border border-emerald-200 shadow-inner map-container">
                 <div className="absolute inset-0 z-0 bg-gradient-to-b from-emerald-50/50 via-transparent to-transparent pointer-events-none"></div>
-                <MapContainer
+                <SafeMapContainer
                   center={mapCenter as LatLngExpression}
                   zoom={zoom}
                   style={{ width: '100%', height: '100%' }}
@@ -771,7 +774,7 @@ const EcoMap = () => {
                   
                   {/* Existing markers from Firestore */}
                   {filteredLocations.map(pin => (
-                    <Marker
+                    <SafeMarker
                       key={pin.id}
                       position={[pin.latitude, pin.longitude]}
                       icon={customIcon(pin.type) as any}
@@ -795,12 +798,12 @@ const EcoMap = () => {
                           )}
                         </div>
                       </Popup>
-                    </Marker>
+                    </SafeMarker>
                   ))}
                   
                   {/* Temporary marker for adding a new pin */}
                   {newPinLocation && (
-                    <Marker
+                    <SafeMarker
                       position={[newPinLocation.lat, newPinLocation.lng]}
                       icon={customIcon(newPinData.type as 'ewaste' | 'shops' | 'ngos' | 'other') as any}
                     >
@@ -808,7 +811,7 @@ const EcoMap = () => {
                         <div className="font-medium">{newPinData.title || "New location"}</div>
                         <p className="text-sm text-gray-500">{newPinData.description || "Description pending..."}</p>
                       </Popup>
-                    </Marker>
+                    </SafeMarker>
                   )}
                   
                   {/* Map click handler */}
@@ -818,7 +821,7 @@ const EcoMap = () => {
                   {userLocation && (
                     <UserLocationMarker position={userLocation} accuracy={locationAccuracy} />
                   )}
-                </MapContainer>
+                </SafeMapContainer>
                 
                 {/* Location button */}
                 <div className="absolute bottom-6 right-6 z-50">
