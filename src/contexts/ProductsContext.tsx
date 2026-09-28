@@ -7,6 +7,8 @@ export interface Product {
   id?: string; // For backward compatibility
   name: string;
   description: string;
+  price?: number;
+  link?: string;
   pointsRequired: number;
   quantity: number;
   image?: string;
