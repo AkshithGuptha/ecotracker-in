@@ -116,18 +116,18 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   },
-  "description": "**URL**: https://lovable.dev/projects/b4a6a6ba-7439-4257-9eec-b26cbbde65d6",
+  "description": "EcoTrackr carbon footprint tracking platform",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AAC-Open-Source-Pool/25AACR18.git"
+    "url": "git+https://github.com/AkshithGuptha/ecotracker-in.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AAC-Open-Source-Pool/25AACR18/issues"
+    "url": "https://github.com/AkshithGuptha/ecotracker-in/issues"
   },
-  "homepage": "https://github.com/AAC-Open-Source-Pool/25AACR18#readme",
+  "homepage": "https://github.com/AkshithGuptha/ecotracker-in#readme",
   "main": "add-sample-products.js",
   "directories": {
     "lib": "lib"
