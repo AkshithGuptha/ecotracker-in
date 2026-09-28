@@ -35,7 +35,8 @@ router.post("/", async (req, res) => {
       await user.save();
     }
 
-    const jwtSecret = process.env.JWT_SECRET || "ecotrack_jwt_secret_key_2026";
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) return res.status(500).json({ message: "JWT_SECRET is not configured" });
     const token = jwt.sign(
       { user: { id: user._id, role: user.role } },
       jwtSecret,
