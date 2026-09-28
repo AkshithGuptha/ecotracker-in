@@ -27,15 +27,6 @@ const RoleRoute = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If user has default role, they can access any route but need to set their role
-  if (userRole === 'default') {
-    // Store the intended destination before role selection
-    if (location.pathname !== '/select-role') {
-      return <Navigate to="/select-role" state={{ from: location }} replace />;
-    }
-    return children;
-  }
-
   // Check if user has any of the required roles
   if (!hasAnyRole(roles)) {
     // Redirect to default route for user's role
