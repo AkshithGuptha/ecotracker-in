@@ -1,0 +1,245 @@
+/* EcoMap animations and transitions */
+.location-card {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.location-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.eco-icon-pulse {
+  animation: eco-pulse 2s infinite;
+}
+
+@keyframes eco-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* User location pulse animation */
+.pulse-animation {
+  position: relative;
+}
+
+.pulse-animation::before {
+  content: '';
+  position: absolute;
+  border: 2px solid #3b82f6;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  animation: pulse 2s ease-out infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Locate button animation */
+.locate-btn {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.locate-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.locate-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(45deg);
+  transition: all 0.3s;
+  opacity: 0;
+}
+
+.locate-btn:hover::after {
+  opacity: 1;
+  animation: sheen 1.5s forwards;
+}
+
+.locate-btn-active {
+  animation: locateActive 1s ease infinite alternate;
+}
+
+@keyframes locateActive {
+  0% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+  }
+}
+
+@keyframes sheen {
+  0% {
+    transform: rotate(45deg) translateY(0);
+  }
+  100% {
+    transform: rotate(45deg) translateY(120%);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.bounce-in {
+  animation: bounceIn 0.5s ease-out forwards;
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.8); }
+  70% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.eco-gradient-bg {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(20, 184, 166, 0.1) 100%);
+}
+
+.spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.map-container {
+  position: relative;
+}
+
+.map-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+  pointer-events: none;
+  z-index: 50;
+  border-radius: 0 0 12px 12px;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2.5s infinite;
+  content: '';
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Fix for Add Location dialog sizing and scrolling */
+.add-location-dialog {
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  margin: 1.5rem auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0 !important; /* Override default padding */
+}
+
+/* Ensures the dialog is properly sized on mobile */
+@media (max-width: 640px) {
+  .add-location-dialog {
+    max-height: 85vh;
+    margin: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateY(0);
+  }
+  
+  .add-location-dialog-content {
+    padding-bottom: 5rem;
+  }
+}
+
+/* Override default AlertDialog styling to ensure proper scrolling */
+[data-radix-popper-content-wrapper] {
+  max-height: 90vh !important;
+  transform: none !important;
+}
+
+/* Fix dialog backdrop for mobile devices */
+[role="dialog"] {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
