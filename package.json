@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev:server": "node --watch server.js",
+    "dev:full": "npm run dev & npm run dev:server"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.27.0",
