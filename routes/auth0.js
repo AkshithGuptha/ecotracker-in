@@ -4,46 +4,70 @@ import User from "../models/user.js";
 
 const router = express.Router();
 
-// ✅ POST /api/auth/auth0
 router.post("/", async (req, res) => {
   try {
-    const { email, name, picture, sub, role } = req.body || {};
-    if (!email) {
-      return res.status(400).json({ message: "Email is required from Auth0 profile" });
+    const accessToken = req.header("Authorization")?.replace(/^Bearer\s+/i, "");
+    if (!accessToken) {
+      return res.status(401).json({ message: "Auth0 access token is required" });
     }
 
-    const userRole = (role && ['user', 'ngo', 'organizer'].includes(role)) ? role : 'user';
+    const issuer = process.env.ISSUER_BASE_URL;
+    if (!issuer) {
+      return res.status(500).json({ message: "Auth0 issuer is not configured" });
+    }
 
-    let user = await User.findOne({ email });
+    const userInfoResponse = await fetch(new URL("/userinfo", issuer), {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!userInfoResponse.ok) {
+      return res.status(401).json({ message: "Invalid Auth0 access token" });
+    }
+
+    const auth0User = await userInfoResponse.json();
+    const { email, name, picture, sub } = auth0User;
+    const { role } = req.body || {};
+
+    if (!email || !sub) {
+      return res.status(401).json({ message: "Auth0 profile is missing required claims" });
+    }
+
+    const userRole = role && ["user", "ngo", "organizer"].includes(role) ? role : "user";
+    const normalizedEmail = email.toLowerCase();
+
+    let user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
-      let baseUsername = (name || email.split("@")[0]).replace(/[^a-zA-Z0-9_]/g, "");
-      if (!baseUsername) baseUsername = "user";
+      const baseUsername =
+        (name || normalizedEmail.split("@")[0]).replace(/[^a-zA-Z0-9_]/g, "") || "user";
       let username = baseUsername;
       let counter = 1;
+
       while (await User.findOne({ username })) {
         username = `${baseUsername}${counter++}`;
       }
 
-      user = new User({
+      user = await User.create({
         username,
-        email,
-        password: "", // Auth0 authenticated user
+        email: normalizedEmail,
+        password: `social:${crypto.randomUUID()}`,
         role: userRole,
         profilePicture: picture || "",
       });
-      await user.save();
     }
 
     const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) return res.status(500).json({ message: "JWT_SECRET is not configured" });
+    if (!jwtSecret) {
+      return res.status(500).json({ message: "JWT_SECRET is not configured" });
+    }
+
     const token = jwt.sign(
-      { user: { id: user._id, role: user.role } },
+      { user: { id: user._id, role: user.role, auth0Sub: sub } },
       jwtSecret,
       { expiresIn: "7d" }
     );
 
-    res.json({
+    return res.json({
       token,
       role: user.role,
       user: {
@@ -56,22 +80,15 @@ router.post("/", async (req, res) => {
     });
   } catch (err) {
     console.error("Auth0 authentication error:", err);
-    res.status(500).json({ message: "Auth0 authentication failed: " + err.message });
+    return res.status(500).json({ message: "Auth0 authentication failed" });
   }
 });
 
-// ✅ GET /api/auth/auth0/me (Returns current OIDC user session info)
 router.get("/me", (req, res) => {
-  if (req.oidc && req.oidc.isAuthenticated()) {
-    return res.json({
-      isAuthenticated: true,
-      user: req.oidc.user,
-    });
+  if (req.oidc?.isAuthenticated()) {
+    return res.json({ isAuthenticated: true, user: req.oidc.user });
   }
-  return res.json({
-    isAuthenticated: false,
-    user: null,
-  });
+  return res.json({ isAuthenticated: false, user: null });
 });
 
 export default router;
