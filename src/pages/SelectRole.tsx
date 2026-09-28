@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { setUserRole } from '@/lib/auth';
 import { UserRole } from '@/lib/auth';
-import { Button, Card, CardContent, CardHeader, Container, Grid, Typography, Box } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Container, GridLegacy as Grid, Typography, Box } from '@mui/material';
 import {
   Person as UserIcon,
   Groups as NgoIcon,
