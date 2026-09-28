@@ -9,7 +9,7 @@ const router = express.Router();
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password } = req.body ?? {};
 
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
@@ -24,7 +24,8 @@ router.post("/register", async (req, res) => {
     await user.save();
 
     const payload = { user: { id: user._id } };
-    const jwtSecret = process.env.JWT_SECRET || "ecotrack_jwt_secret_key_2026";
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) throw new Error("JWT_SECRET is not configured");
     const token = jwt.sign(payload, jwtSecret, { expiresIn: "7d" });
 
     res.json({ token, userId: user._id, email: user.email, role: user.role });
@@ -37,7 +38,7 @@ router.post("/register", async (req, res) => {
 // Login
 router.post("/login", async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body ?? {};
 
     // Check if user exists in User collection
     let user = await User.findOne({ email });
@@ -46,7 +47,8 @@ router.post("/login", async (req, res) => {
       if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
       const payload = { user: { id: user._id } };
-      const jwtSecret = process.env.JWT_SECRET || "ecotrack_jwt_secret_key_2026";
+      const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) throw new Error("JWT_SECRET is not configured");
       const token = jwt.sign(payload, jwtSecret, { expiresIn: "7d" });
 
       return res.json({
@@ -72,7 +74,8 @@ if (ngo) {
 
   // ✅ FIXED PAYLOAD
   const payload = { ngo: { id: ngo._id } };
-  const jwtSecret = process.env.JWT_SECRET || "ecotrack_jwt_secret_key_2026";
+  const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) throw new Error("JWT_SECRET is not configured");
   const token = jwt.sign(payload, jwtSecret, { expiresIn: "7d" });
 
   return res.json({
