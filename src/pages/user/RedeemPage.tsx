@@ -144,7 +144,7 @@ const RedeemPage: React.FC = () => {
 
         if (response.ok) {
           const registrations = await response.json();
-          const productIds = new Set(registrations.map((r: any) => String(r.productId)));
+          const productIds = new Set<string>(registrations.map((r: any) => String(r.productId)));
           setRegisteredProducts(productIds);
         }
       } catch (error) {
