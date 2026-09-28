@@ -38,7 +38,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { loginWithPopup, loginWithRedirect, user: auth0User, isAuthenticated, isLoading: auth0Loading } = useAuth0();
+  const { loginWithPopup, loginWithRedirect, getAccessTokenSilently, user: auth0User, isAuthenticated, isLoading: auth0Loading } = useAuth0();
 
   const API_BASE = import.meta.env.VITE_API_BASE || "";
 
@@ -48,9 +48,10 @@ const Signup = () => {
       if (isAuthenticated && auth0User && auth0User.email) {
         setLoading(true);
         try {
+          const accessToken = await getAccessTokenSilently();
           const res = await fetch(`${API_BASE}/api/auth/auth0`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
             body: JSON.stringify({
               email: auth0User.email,
               name: auth0User.name,
