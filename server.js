@@ -27,7 +27,7 @@ import communityRoutes from "./routes/community.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
 
 // Needed because this file uses ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -72,22 +72,23 @@ app.use(express.json({ limit: "10mb" }));
 const auth0Config = {
   authRequired: false,
   auth0Logout: true,
-  secret: process.env.SECRET || "f3b4362858b34e1518ca41e375c9748fe38a7923950857cddd3ae047daff5670",
+  secret: process.env.SECRET || process.env.AUTH0_SECRET,
   baseURL: process.env.BASE_URL || "http://localhost:5000",
-  clientID: process.env.CLIENT_ID || "j6h2Ua2hbmyeyI5ZgzN6LwHzS6YkRU3B",
-  issuerBaseURL: process.env.ISSUER_BASE_URL || "https://dev-4fy07vc2iti7f4go.us.auth0.com",
+  clientID: process.env.CLIENT_ID,
+  issuerBaseURL: process.env.ISSUER_BASE_URL,
   ...(process.env.CLIENT_SECRET ? { clientSecret: process.env.CLIENT_SECRET } : { clientAuthMethod: "none" }),
 };
 
-app.use(auth(auth0Config));
+if (auth0Config.secret && auth0Config.clientID && auth0Config.issuerBaseURL) {
+  app.use(auth(auth0Config));
 
-// Signup OIDC route handler
-app.get('/signup', (req, res) =>
-  res.oidc.login({
-    returnTo: '/',
-    authorizationParams: { screen_hint: 'signup' },
-  })
-);
+  app.get("/signup", (req, res) =>
+    res.oidc.login({
+      returnTo: "/",
+      authorizationParams: { screen_hint: "signup" },
+    })
+  );
+}
 
 
 // --------------------
