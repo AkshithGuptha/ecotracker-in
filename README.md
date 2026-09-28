@@ -33,10 +33,10 @@ Follow these steps to run the project locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/AAC-Open-Source-Pool/25AACR18.git
+git clone https://github.com/AkshithGuptha/ecotracker-in.git
 
 # Move into the project folder (the repo's working directory)
-cd ecotrack
+cd ecotracker-in
 
 # Install dependencies listed in package.json so the project can build and run
 npm install
@@ -47,17 +47,19 @@ cp .env.example .env
 # Edit .env with your configuration
 # Open .env in a text editor and set values like DB connection string, PORT, API keys, and any other variables required by the app
 # Make sure you do NOT commit real secrets to git; use safe values for local development
-# Example: set MONGO_URI=mongodb://localhost:27017/ecotrack and PORT=5000 if those are expected
+# Example: set MONGODB_URI=mongodb://localhost:27017/ecotrack and PORT=5000 if those are expected
 # Save the file after updating the variables.
 
 # Start MongoDB (make sure it's running)
 # If you have MongoDB installed locally, run mongod in a separate terminal to start the database process.
-# Alternatively, if you use a cloud MongoDB (Atlas), ensure the MONGO_URI in .env points to it and that network access is allowed.
+# Alternatively, if you use MongoDB Atlas, ensure MONGODB_URI in .env points to it and that network access is allowed.
 mongod
 
-# Start the development server
-# This runs the backend and/or frontend dev script defined in package.json (e.g. starts Node/Express and Vite/React dev servers)
+# Start the frontend development server
 npm run dev
+
+# In a second terminal, start the backend API
+npm run dev:server
 
 # Access the application
 # Frontend: http://localhost:5173
