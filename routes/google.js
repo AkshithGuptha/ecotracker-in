@@ -13,26 +13,15 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "No credential provided" });
     }
 
-    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID || "22049997057-p6qg64mo1iufr7m8vnhsb5qa9tvg9fq8.apps.googleusercontent.com";
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) return res.status(500).json({ message: "Google authentication is not configured" });
     const client = new OAuth2Client(clientId);
 
-    let payload;
-    try {
-      const ticket = await client.verifyIdToken({
-        idToken: credential,
-        audience: clientId,
-      });
-      payload = ticket.getPayload();
-    } catch (tokenErr) {
-      console.warn("Google verifyIdToken note, fallback decoding token payload:", tokenErr.message);
-      const decoded = jwt.decode(credential);
-      if (decoded && decoded.email) {
-        payload = decoded;
-      } else {
-        throw tokenErr;
-      }
-    }
-
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: clientId,
+    });
+    const payload = ticket.getPayload();
     const { email, name, picture } = payload || {};
     if (!email) {
       return res.status(400).json({ message: "Google token missing email information" });
@@ -61,7 +50,8 @@ router.post("/", async (req, res) => {
       await user.save();
     }
 
-    const jwtSecret = process.env.JWT_SECRET || "ecotrack_jwt_secret_key_2026";
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) return res.status(500).json({ message: "JWT_SECRET is not configured" });
     const token = jwt.sign(
       { user: { id: user._id, role: user.role } },
       jwtSecret,
