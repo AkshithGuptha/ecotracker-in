@@ -1,6 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { getToken, getUserRole, hasAnyRole, UserRole } from "@/lib/auth";
-import { useEffect } from "react";
 
 type RoleRouteProps = {
   children: JSX.Element;
@@ -12,7 +11,6 @@ const roleDefaultRoutes: Record<UserRole, string> = {
   'user': '/dashboard',
   'ngo': '/ngo/dashboard',
   'organizer': '/organiser/dashboard',
-  'default': '/dashboard',
 };
 
 const RoleRoute = ({ 
